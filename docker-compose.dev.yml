@@ -4,9 +4,7 @@ services:
   app:
     build: 
       context: .
-      dockerfile: docker/core/Dockerfile
     container_name: instagram.app
-    hostname: app
     command: >
       sh -c "python manage.py runserver 0.0.0.0:8000"
     volumes:
@@ -14,37 +12,37 @@ services:
     ports:
       - 8000:8000
     env_file:
-      - ../.env
-    networks:
-      - main
+      - .env
+    depends_on:
+      - db
 
   db:
-    image: postgres:13
+    image: postgres
     container_name: instagram.db
-    hostname: db
     environment:
-      POSTGRES_DB: ${DB_NAME:-instagram}
       POSTGRES_USER: ${DB_USER:-instagram}
       POSTGRES_PASSWORD: ${DB_PASSWORD:-instagram}
+      POSTGRES_DB: ${DB_NAME:-instagram}
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    env_file:
+      - .env
     ports:
       - 5432:5432
-    networks:
-      - main
 
   pgadmin:
     image: dpage/pgadmin4
     container_name: instagram.pgadmin
-    hostname: pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-admin@localhost}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
     ports:
       - 5050:80
-    networks:
-      - main
     
 volumes:
   postgres_data:
 
 
 networks:
-  main:
+  default:
+    driver: bridge
