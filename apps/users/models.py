@@ -44,3 +44,36 @@ class User(AbstractBaseUser, PermissionsMixin,BaseModel):
     
     def __str__(self):
         return self.email
+
+    
+    @classmethod
+    def verify_account(cls, token):
+      """Verify user account"""
+      pass
+       
+    
+    @classmethod
+    def resend_activation_email(cls, email):
+        """Resend activation email"""
+        user = cls.objects.get(email=email)
+        user.send_activation_email()
+        
+    def send_activation_email(self):
+        pass
+        
+        
+    @classmethod
+    def send_password_reset_email(cls, email):
+        pass
+    
+    @property
+    def token(self):
+        pass
+    
+    @property
+    def token_expired(self):
+        pass
+    
+    @property
+    def reset_token(self):
+        pass
