@@ -1,5 +1,5 @@
 ### Build and install packages
-FROM python:3.9 as build-python
+FROM python:3.10 AS build-python
 
 RUN apt-get -y update \
   && apt-get install -y gettext \
@@ -13,7 +13,7 @@ COPY requirements/common.txt requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
 ### Final image
-FROM python:3.9-slim
+FROM python:3.10-slim
 
 RUN groupadd -r instagram-clone && useradd -r -g instagram-clone instagram-clone
 
@@ -41,9 +41,11 @@ RUN echo 'image/avif avif' >> /etc/mime.types
 RUN mkdir -p /app/media /app/static \
   && chown -R instagram-clone:instagram-clone /app/
 
-COPY --from=build-python /usr/local/lib/python3.9/site-packages/ /usr/local/lib/python3.9/site-packages/
+COPY --from=build-python /usr/local/lib/python3.10/site-packages/ /usr/local/lib/python3.10/site-packages/
 COPY --from=build-python /usr/local/bin/ /usr/local/bin/
+
 COPY . /app
+
 WORKDIR /app
 
 

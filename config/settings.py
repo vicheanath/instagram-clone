@@ -36,7 +36,22 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    # internal apps
     "apps.core",
+    "apps.users",
+    "apps.posts",
+    "apps.comments",
+    "apps.stories",
+    "apps.interactions",
+    "apps.medias",
+    "apps.tags",
+    "apps.notifications",
+    
+    # external apps
+    'graphene_django',
+    'graphql_jwt.refresh_token.apps.RefreshTokenConfig',
+    'graphql_auth',
+    
 ]
 
 MIDDLEWARE = [
@@ -125,3 +140,19 @@ STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 DEBUG = True
+
+AUTH_USER_MODEL = "users.User"
+
+GRAPHENE = {
+    'SCHEMA': 'apps.users.schema.schema',
+    'MIDDLEWARE': [
+        'graphene_django.debug.DjangoDebugMiddleware',
+        'graphql_jwt.middleware.JSONWebTokenMiddleware'
+    ],
+}
+
+AUTHENTICATION_BACKENDS = [
+    # "graphql_jwt.backends.JSONWebTokenBackend",
+    'graphql_auth.backends.GrapheneModelBackend',
+    "django.contrib.auth.backends.ModelBackend",
+]
