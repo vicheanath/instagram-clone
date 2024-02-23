@@ -1,21 +1,19 @@
 import graphene
-from graphql_auth import mutations
-from graphql_auth.schema import UserQuery, MeQuery
 
-class AuthMutation(graphene.ObjectType):
-   register = mutations.Register.Field()
-   verify_account = mutations.VerifyAccount.Field()
-   token_auth = mutations.ObtainJSONWebToken.Field()
-   update_account = mutations.UpdateAccount.Field()
-   resend_activation_email = mutations.ResendActivationEmail.Field()
-   send_password_reset_email = mutations.SendPasswordResetEmail.Field()
-   password_reset = mutations.PasswordReset.Field()
-   password_change = mutations.PasswordChange.Field()
+from graphene_django import DjangoObjectType
+from apps.users.models import User
+from apps.users.mutations import Mutation, UserType
 
-class Query(UserQuery, MeQuery, graphene.ObjectType):
-    pass
 
-class Mutation(AuthMutation, graphene.ObjectType):
-   pass
+class Query(graphene.ObjectType):
+    users = graphene.List(UserType)
+    user = graphene.Field(UserType, id=graphene.Int())
+
+    def resolve_users(self, info, **kwargs):
+        return User.objects.all()
+
+    def resolve_user(self, info, id):
+        return User.objects.get(pk=id)
+
 
 schema = graphene.Schema(query=Query, mutation=Mutation)

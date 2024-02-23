@@ -1,13 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from django.apps import apps
 
 from apps.users.models import User
-
-app = apps.get_app_config('graphql_auth')
-
-for model_name, model in app.models.items():
-    admin.site.register(model)
 
 
 # UserAdmin class with password change and reset
@@ -26,7 +20,7 @@ class UserAdmin(UserAdmin):
         return (
             (None, {"fields": ("email", "password")}),
             ("Personal info", {"fields": ("name", "username", "bio", "website", "location", "birth_date")}),
-            ("Permissions", {"fields": ("is_active", "is_staff", "is_superuser")}),
+            ("Permissions", {"fields": ("is_active", "is_staff", "is_superuser", "groups")}),
             ("Important dates", {"fields": ("last_login", "created_at", "updated_at")}),
         )
 
