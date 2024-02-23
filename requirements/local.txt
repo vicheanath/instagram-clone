@@ -1,1 +1,2 @@
 -r common.txt
+drf-yasg>=1.21.7,<1.22.0

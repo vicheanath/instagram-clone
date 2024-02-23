@@ -1,0 +1,50 @@
+version: "3.9"
+
+services:
+  app:
+    build: 
+      context: .
+      dockerfile: docker/core/Dockerfile
+    container_name: instagram.app
+    hostname: app
+    command: >
+      sh -c "python manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - ./:/app
+    ports:
+      - 8000:8000
+    env_file:
+      - ../.env
+    networks:
+      - main
+
+  db:
+    image: postgres:13
+    container_name: instagram.db
+    hostname: db
+    environment:
+      POSTGRES_DB: ${DB_NAME:-instagram}
+      POSTGRES_USER: ${DB_USER:-instagram}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-instagram}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    networks:
+      - main
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: instagram.pgadmin
+    hostname: pgadmin
+    ports:
+      - 5050:80
+    networks:
+      - main
+    
+volumes:
+  postgres_data:
+
+
+networks:
+  main:
