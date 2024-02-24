@@ -1,26 +1,12 @@
 import graphene
+import graphql_jwt
 from graphene_django import DjangoObjectType
 from apps.users.models import User
 
 class UserType(DjangoObjectType):
     class Meta:
         model = User
-        fields = (
-            "id",
-            "email",
-            "name",
-            "username",
-            "bio",
-            "website",
-            "location",
-            "birth_date",
-            "is_active",
-            "is_staff",
-            "is_superuser",
-            "created_at",
-            "updated_at",
-        )
-        description = "A user object"
+        exclude = ("password",)
 
 class Register(graphene.Mutation):
     class Arguments:
@@ -94,6 +80,8 @@ class PasswordChange(graphene.Mutation):
         
 class UpdateAccount(graphene.Mutation):
     class Arguments:
+        id = graphene.ID()
+        email = graphene.String()
         name = graphene.String()
         username = graphene.String()
         bio = graphene.String()
@@ -104,7 +92,7 @@ class UpdateAccount(graphene.Mutation):
     user = graphene.Field(UserType)
     
     def mutate(self, info, **kwargs):
-        user = info.context.user
+        user = User.objects.get(id=kwargs.get("id"))
         for key, value in kwargs.items():
             setattr(user, key, value)
         user.save()
@@ -148,5 +136,7 @@ class Mutation(graphene.ObjectType):
     password_reset = PasswordReset.Field()
     password_change = PasswordChange.Field()
     update_account = UpdateAccount.Field()
-    token_auth = ObtainJSONWebToken.Field()
+    token_auth = graphql_jwt.ObtainJSONWebToken.Field()
+    verify_token = graphql_jwt.Verify.Field()
+    refresh_token = graphql_jwt.Refresh.Field()
     
