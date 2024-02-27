@@ -1,4 +1,4 @@
-from apps.core.models import BaseModel
+from ..core.models import BaseModel
 from django.db import models
 
 from django.contrib.auth.models import (
@@ -31,13 +31,15 @@ class User(AbstractBaseUser, PermissionsMixin,BaseModel):
     email = models.EmailField(max_length=255, unique=True)
     name = models.CharField(max_length=255)
     username = models.CharField(max_length=255, unique=True)
-    bio = models.TextField(blank=True)
-    website = models.URLField(blank=True)
-    location = models.CharField(max_length=255, blank=True)
-    birth_date = models.DateField(null=True, blank=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
+    country = models.CharField(max_length=255, blank=True)
+    city = models.CharField(max_length=255, blank=True)
+    address = models.CharField(max_length=255, blank=True)
+    phone = models.CharField(max_length=255, blank=True)
+
+    
     objects = UserManager()
     
     USERNAME_FIELD = "email"
@@ -77,3 +79,29 @@ class User(AbstractBaseUser, PermissionsMixin,BaseModel):
     @property
     def reset_token(self):
         pass
+    
+    
+class Profile(BaseModel):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    avatar = models.ImageField(upload_to="avatars/", null=True, blank=True)
+    cover = models.ImageField(upload_to="covers/", null=True, blank=True)
+    website = models.URLField(blank=True)
+    bio = models.TextField(blank=True)
+    location = models.CharField(max_length=255, blank=True)
+    birth_date = models.DateField(null=True, blank=True)
+    followers_count = models.PositiveIntegerField(default=0)
+    following_count = models.PositiveIntegerField(default=0)
+    
+    def __str__(self):
+        return self.user.email
+    
+    
+class Follow(BaseModel):
+    follower = models.ForeignKey(User, on_delete=models.CASCADE, related_name="follower")
+    following = models.ForeignKey(User, on_delete=models.CASCADE, related_name="following")
+    
+    class Meta:
+        unique_together = ['follower', 'following']
+        
+    def __str__(self):
+        return f'{self.follower.email} - {self.following.email}'
