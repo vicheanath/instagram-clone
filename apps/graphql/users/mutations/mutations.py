@@ -128,15 +128,5 @@ class Login(graphene.Mutation):
         else:
             return Login(token=None, refresh_token=None)
         
-class Mutation(graphene.ObjectType):
-    register = Register.Field()
-    verify_account = VerifyAccount.Field()
-    resend_activation_email = ResendActivationEmail.Field()
-    send_password_reset_email = SendPasswordResetEmail.Field()
-    password_reset = PasswordReset.Field()
-    password_change = PasswordChange.Field()
-    update_account = UpdateAccount.Field()
-    token_auth = graphql_jwt.ObtainJSONWebToken.Field()
-    verify_token = graphql_jwt.Verify.Field()
-    refresh_token = graphql_jwt.Refresh.Field()
+
     
