@@ -1,4 +1,3 @@
-
 import os
 import ast
 from pathlib import Path
@@ -29,6 +28,7 @@ def get_url_from_env(name, *, schemes=None) -> Optional[str]:
         return value
     return None
 
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
@@ -43,6 +43,18 @@ DEBUG = get_bool_from_env("DEBUG", True)
 
 ALLOWED_HOSTS = []
 ALLOWED_HOSTS.extend(get_list(os.environ.get("ALLOWED_HOSTS", "")))
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+    "https://sub.example.com",
+    "http://localhost:8080",
+    "http://127.0.0.1:9000",
+]
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:5173",
+    "https://sub.example.com",
+    "http://localhost:8080",
+]
 
 # Application definition
 
@@ -62,17 +74,19 @@ INSTALLED_APPS = [
     "apps.medias",
     "apps.notifications",
     # external apps
+    "corsheaders",
     "debug_toolbar",
     "graphene_django",
     "graphql_jwt.refresh_token.apps.RefreshTokenConfig",
 ]
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     "debug_toolbar.middleware.DebugToolbarMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
-    "django.middleware.csrf.CsrfViewMiddleware",
+    # "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
