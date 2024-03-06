@@ -2,11 +2,13 @@ import graphene
 from apps.posts.models import Post
 from .types import PostType
 from apps.users.models import User
+from graphene_file_upload.scalars import Upload
+
 
 class CreatePost(graphene.Mutation):
     class Arguments:
         caption = graphene.String(required=True)
-        media = graphene.String(required=True)
+        media = Upload(required=True)
         
     post = graphene.Field(PostType)
     
